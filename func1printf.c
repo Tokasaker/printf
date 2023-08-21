@@ -1,50 +1,55 @@
-#ifndef FUNC1PRINTF_H
-#define FUNC1PRINTF_H
-
-#include "main.h"
+#include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <unistd.h>
+
 /**
- *  _printf - by printf print c , s and %
+ *  _printf - custom printf function to print characters, strings, and %
  *
- * @format: accept specifer whether s or c or %
+ * @format: format specifier string
  *
- * Return: Always 0
+ * Return: number of characters printed, or -1 on error
  */
 int _printf(const char *format, ...)
 {
-int noofcharacters = 0;
-va_list lis;
+	int noofcharacters = 0;
+	va_list lis;
 
-if (format == NULL)
-{
-	return (-1);
-}
-va_start(lis, format);
-while (*format)
-{
-	if (*format != '%')
+	if (format == NULL)
 	{
-		write(1, format, 1);
-		noofcharacters++;
+		return (-1);
 	}
-	else
+	va_start(lis, format);
+	while (*format)
 	{
-		format++;
-		if (*format == '\0')
-			break;
-		if (*format == '%')
+		if (*format != '%')
 		{
 			write(1, format, 1);
-			noofcharacters++;
-		}
+			noofcharacters++; }
 		else
 		{
-			noofcharacters += chspc(*format, lis);
+			format++;
+			if (*format == '\0')
+				break;
+			if (*format == '%')
+			{
+				write(1, format, 1);
+				noofcharacters++; }
+			else if (*format == 'c')
+			{
+				char character = va_arg(lis, int);
+
+				write(1, &character, 1);
+				noofcharacters++; }
+			else if (*format == 's')
+			{
+				char *stringprint = va_arg(lis, char*);
+
+				write(1, stringprint, strlen(stringprint));
+				noofcharacters += strlen(stringprint); }
 		}
+		format++;
 	}
-	format++;
+	va_end(lis);
+	return (noofcharacters);
 }
-va_end(lis);
-return (noofcharacters);
-}
-#endif
