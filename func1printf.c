@@ -12,13 +12,12 @@
  */
 int _printf(const char *format, ...)
 {
-	int noofcharacters = 0;
+	int noofcharacters = 0, stringlength = 0;
 	va_list lis;
 
 	if (format == NULL)
 	{
-		return (-1);
-	}
+		return (-1); }
 	va_start(lis, format);
 	while (*format)
 	{
@@ -45,11 +44,11 @@ int _printf(const char *format, ...)
 			{
 				char *stringprint = va_arg(lis, char*);
 
-				write(1, stringprint, strlen(stringprint));
-				noofcharacters += strlen(stringprint); }
-		}
-		format++;
-	}
+				while (stringprint[stringlength] != '\0')
+				{
+					stringlength++; }
+				write(1, stringprint, stringlength);
+				noofcharacters += stringlength; } }
+		format++; }
 	va_end(lis);
-	return (noofcharacters);
-}
+	return (noofcharacters); }
