@@ -9,12 +9,12 @@
  */
 int _printf(const char *format, ...)
 {
-	if (format == NULL)
-	{
-		return (0); }
 	va_list lis;
 	int noofchar = 0;
 
+	if (format == NULL)
+        {
+                return (0); }
 	va_start(lis, format);
 	while (*format)
 	{
@@ -41,12 +41,13 @@ int _printf(const char *format, ...)
 				noofchar += printint(lis, format); }
 			else
 			{
-				write(1, format, 1);
-				noofchar++;
+				        write(1, format, 1);
+					noofchar++;
+					format++;
 			}
-			format++;
 		}
 		va_end(lis);
-		return (noofchar); }
+		return (noofchar);
+	}
 }
 
