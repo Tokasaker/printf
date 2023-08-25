@@ -2,8 +2,6 @@
 
 #include <stdarg.h>
 #include <stddef.h>
-void printstock(char stock[], int *buff_ind);
-
 /**
  * _printf - Printf function
  * @format: format.
@@ -11,58 +9,44 @@ void printstock(char stock[], int *buff_ind);
  */
 int _printf(const char *format, ...)
 {
-	int k, yprint = 0, noofchar = 0;
-
-	int buff_ind = 0;
-	va_list lis;
-	char stock[stocksz];
-
 	if (format == NULL)
-		return (-1);
+	{
+		return (0); }
+	va_list lis;
+	int noofchar = 0;
 
 	va_start(lis, format);
-
-	for (k = 0; format && format[k] != '\0'; k++)
+	while (*format)
 	{
-		if (format[k] != '%')
+		if (*format == '%')
 		{
-			stock[buff_ind++] = format[k];
-			if (buff_ind == stocksz)
-				printstock(stock, &buff_ind);
-			/* write(1, &format[i], 1);*/
-			noofchar++;
+			format++;
+			if (*format == 's')
+			{
+				char *string = va_arg(lis, char*);
+
+				if (string == NULL)
+				{
+					write(1, "(null)", 6);
+					noofchar += 6; }
+				else
+				{
+					noofchar += prints(lis, string); }
+			}
+			else if (*format == 'c')
+			{
+				noofchar += printc(lis); }
+			else if (*format == 'i' || *format == 'd')
+			{
+				noofchar += printint(lis, format); }
+			else
+			{
+				write(1, format, 1);
+				noofchar++;
+			}
+			format++;
 		}
-		else
-		{
-			printstock(stock, &buff_ind);
-			int flags = gfl(format, &k);
-			int width = gwi(format, &k, lis);
-			int precision = gpr(format, &k, lis);
-			int size = gsz(format, &k);
-			++k;
-			yprint = handlestock(format, &k, lis, stock,
-					flags, width, precision, size);
-			if (yprint == -1)
-				return (-1);
-			noofchar += yprint;
-		}
-	}
-
-	printstock(stock, &buff_ind);
-
-	va_end(lis);
-
-	return (noofchar);
+		va_end(lis);
+		return (noofchar); }
 }
 
-/**
- * printstock - Prints the contents of the buffer if it exist
- * @stock: Array of chars
- * @buff_ind: Index at which to add next char, represents the length.
- */
-void printstock(char stock[], int *buff_ind)
-{
-	if (*buff_ind > 0)
-		write(1, &stock[0], *buff_ind);
-	*buff_ind = 0;
-}
